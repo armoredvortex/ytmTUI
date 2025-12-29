@@ -27,3 +27,62 @@
     border: solid red; /* Visual guide, remove later */
     background: $surface;
 }
+
+/* Specific styles for Browser contents */
+#search-box {
+    dock: top;
+    height: 3;
+    margin-bottom: 1;
+}
+
+#results-table {
+    height: 1fr; /* Fill the rest of the browser pane */
+    border: none;
+}
+
+/* ... Top section CSS stays the same ... */
+
+/* --- Bottom Section Layout --- */
+#player {
+    height: 12;         /* Give it enough height for Label + Buttons */
+    dock: bottom;
+    background: $surface;
+    border-top: solid $primary;
+    padding: 1;
+}
+
+#track-info {
+    text-align: center;
+    width: 100%;
+    content-align: center middle;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#controls {
+    height: auto;
+    width: auto;
+}
+
+Button {
+    margin: 0 1; /* Add space between buttons */
+    min-width: 16;
+}
+
+/* ... existing css ... */
+
+#art {
+    width: 1fr;
+    border: solid blue; /* Keep border for now to see boundaries */
+    background: $panel;
+    /* Ensure containers inside align nicely */
+    align: center middle;
+    overflow: hidden; /* Hide overflow if ASCII is too big */
+}
+
+/* Fix text alignment inside the ASCII display area */
+#art-display {
+     text-align: center;
+}
+
+/* ... existing css ... */
