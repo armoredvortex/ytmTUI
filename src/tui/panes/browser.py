@@ -59,6 +59,6 @@ class Browser(Static):
         thumb_url = self.thumbnails.get(video_id, "")
 
         # Logic proceeds as normal...
-        self.app.backend.player.play(video_id)
+        self.app.backend.play_song(video_id)
         self.app.query_one("Player").update_now_playing(title, artist)
         self.app.query_one("Art").show_art(thumb_url)

@@ -3,6 +3,9 @@ from textual.widgets import Static, Button, Label, ProgressBar
 from textual.containers import Center, Horizontal, Container
 
 class Player(Static):
+
+    has_started = False
+
     """Displays player controls, track info, and progress."""
 
     def compose(self) -> ComposeResult:
@@ -34,8 +37,26 @@ class Player(Static):
         lbl_total = self.query_one("#time-total", Label)
         
         player = self.app.backend.player
+
         current = player.current_time
         total = player.total_duration
+        
+        if current > 1.0:
+            self.has_started = True
+
+        if player.mpv.core_idle and not player.mpv.pause:
+            if self.has_started:
+                # Reset flag for the next song
+                self.has_started = False 
+                
+                # Play next
+                next_track = self.app.backend.next()
+                if next_track:
+                    title = next_track.get('title', 'Unknown')
+                    artist = next_track.get('artists', [{'name': 'Unknown'}])[0]['name']
+                    self.update_now_playing(title, artist)
+                    # Note: You might want to clear the art or fetch new art here
+                    return
 
         lbl_current.update(self.format_time(current))
         lbl_total.update(self.format_time(total))
