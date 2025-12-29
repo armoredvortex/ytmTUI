@@ -2,7 +2,6 @@ from textual.app import ComposeResult
 from textual.widgets import Static
 from textual.containers import Center, Middle
 
-# Add ImageEnhance to imports
 from PIL import Image, ImageEnhance
 from rich.text import Text
 from rich.style import Style
@@ -10,52 +9,42 @@ import requests
 from io import BytesIO
 
 class Art(Static):
-    """Displays album art using high-res half-block rendering."""
-
     def compose(self) -> ComposeResult:
         with Middle():
             with Center():
-                yield Static("Select a song", id="art-display", expand=True)
+                yield Static("No Art", id="art-display")
 
     def show_art(self, url: str):
-        """Downloads image and renders it using half-blocks."""
         art_widget = self.query_one("#art-display", Static)
         
         if not url:
-            art_widget.update("No art available.")
+            art_widget.update("No URL")
             return
 
-        # Get size
-        w = self.size.width
-        h = self.size.height
-        if w == 0: w = 40
-        if h == 0: h = 20
-
         try:
-            art_widget.update("Downloading...")
+            art_widget.update("...") 
             
-            response = requests.get(url)
+            response = requests.get(url, timeout=5)
+            if response.status_code != 200:
+                art_widget.update(f"HTTP {response.status_code}")
+                return
+
             im = Image.open(BytesIO(response.content))
             im = im.convert("RGB")
             
-            # --- IMPROVEMENT 1: Better Resizing ---
-            # Calculate target dimensions
-            target_width = w
-            target_height = h * 2
+            # --- SAFE SIZE UPDATE ---
+            # Using 10 columns (20 pixels wide) to be absolutely safe
+            target_cols = 14
+            # Using 5 rows (10 pixels high)
+            target_rows = 7
+
+            im = im.resize((target_cols, target_rows * 2), Image.Resampling.LANCZOS)
             
-            # Use LANCZOS for high-quality downsampling (smooths out jagged edges)
-            im = im.resize((target_width, target_height), Image.Resampling.LANCZOS)
-            
-            # --- IMPROVEMENT 2: Sharpening ---
-            # Terminal art can look muddy. Sharpening helps edges stand out.
             enhancer = ImageEnhance.Sharpness(im)
-            im = enhancer.enhance(2.0) # 2.0 is double sharpness
-            
-            # Optional: Boost contrast slightly to make colors pop against dark terminals
+            im = enhancer.enhance(2.0)
             enhancer = ImageEnhance.Contrast(im)
             im = enhancer.enhance(1.2)
 
-            # --- Rendering Loop (Same as before) ---
             rich_text = Text()
             pixels = im.load()
             
@@ -74,4 +63,5 @@ class Art(Static):
             art_widget.update(rich_text)
 
         except Exception as e:
-            art_widget.update(f"Error:\n{e}")
+            err_msg = Text(f"Error:\n{str(e)}", style="bold red")
+            art_widget.update(err_msg)

@@ -1,104 +1,146 @@
-/* Main container acts as a vertical column between Header and Footer */
+/* --- Global Theme & Layout --- */
+Screen {
+    layout: vertical;
+    background: $surface-darken-1;
+}
+
 #app-grid {
     layout: vertical;
-    height: 1fr; /* Fill available space */
+    height: 1fr;
+    width: 1fr;
 }
 
-/* --- Top Section Layout --- */
-#top-split {
-    height: 1fr; /* Take all remaining height not used by the player */
-}
-
+/* --- Top Section: Browser --- */
 #browser {
-    width: 2fr;  /* Take 2 parts of width (approx 66%) */
-    border: solid green; /* Visual guide, remove later */
-    background: $panel;
-}
-
-#art {
-    width: 1fr;  /* Take 1 part of width (approx 33%) */
-    border: solid blue; /* Visual guide, remove later */
-    background: $panel;
-}
-
-/* --- Bottom Section Layout --- */
-#player {
-    height: 10;  /* Fixed height for controls */
-    border: solid red; /* Visual guide, remove later */
+    width: 100%;
+    height: 1fr;
     background: $surface;
+    border: none;
+    padding: 0 1;
 }
 
-/* Specific styles for Browser contents */
 #search-box {
     dock: top;
     height: 3;
-    margin-bottom: 1;
+    margin: 1 0;
+    background: $panel-lighten-1;
+    border: none; 
 }
 
 #results-table {
-    height: 1fr; /* Fill the rest of the browser pane */
+    height: 1fr;
     border: none;
+    background: $surface;
 }
 
-/* ... Top section CSS stays the same ... */
+DataTable > .datatable--header {
+    background: $surface-darken-1;
+    color: $text-muted;
+    text-style: bold;
+}
 
-/* --- Bottom Section Layout --- */
-#player {
-    height: 12;         /* Give it enough height for Label + Buttons */
+DataTable > .datatable--cursor {
+    background: $primary;
+    color: $text;
+}
+
+/* --- Bottom Section Container --- */
+#bottom-split {
+    height: 8;
     dock: bottom;
-    background: $surface;
-    border-top: solid $primary;
-    padding: 1;
+    background: $panel-darken-1;
+    border-top: heavy $primary;
+}
+
+/* --- Bottom Left: Player Controls --- */
+#player {
+    width: 1fr;
+    height: 100%;
+    align: center middle;
+    padding: 0 2;
 }
 
 #track-info {
-    text-align: center;
     width: 100%;
-    content-align: center middle;
+    text-align: center;
     text-style: bold;
-    margin-bottom: 1;
+    color: $text-accent;
+    margin-bottom: 0;
 }
 
+/* --- PROGRESS BAR FIX --- */
+/* You were missing this style for the new wrapper! */
+#progress-wrapper {
+    width: 100%;      /* Force it to fill the player width */
+    height: auto;
+    margin: 1 0;
+}
+
+#progress-container {
+    height: 1;
+    width: 100%;      /* Ensure the Horizontal row fills the wrapper */
+    align: center middle;
+}
+
+#time-current, #time-total {
+    width: 6;
+    text-align: center;
+    color: $text-muted;
+}
+
+#progress-bar {
+    width: 1fr;       /* Grow to fill space between timestamps */
+    margin: 0 1;
+    background: $surface-lighten-1;
+    color: $primary;
+}
+
+ProgressBar > Bar {
+    width: 1fr;
+}
+
+/* Force the internal bar to fill the widget */
+ProgressBar > .bar--bar {
+    width: 100%;
+}
+
+/* --- Buttons --- */
 #controls {
     height: auto;
     width: auto;
 }
 
 Button {
-    margin: 0 1; /* Add space between buttons */
-    min-width: 16;
-}
-
-/* ... existing css ... */
-
-#art {
-    width: 1fr;
-    border: solid blue; /* Keep border for now to see boundaries */
-    background: $panel;
-    /* Ensure containers inside align nicely */
-    align: center middle;
-    overflow: hidden; /* Hide overflow if ASCII is too big */
-}
-
-/* Fix text alignment inside the ASCII display area */
-#art-display {
-     text-align: center;
-}
-
-#progress-container {
+    min-width: 12;
     height: 1;
-    width: 80%; /* Adjust total width of the progress area */
-    align: center middle;
-    margin-bottom: 1;
-}
-
-#time-current, #time-total {
-    width: 6; /* Fixed width prevents jitter when digits change (0:09 -> 0:10) */
-    text-align: center;
+    margin: 0 1;
+    border: none;
+    background: transparent;
     color: $text-muted;
 }
 
-#progress-bar {
-    width: 1fr; /* Fill remaining space between the two labels */
-    margin: 0 1; /* Small gap between text and bar */
+Button:hover {
+    background: $primary;
+    color: $text;
+}
+
+/* --- Bottom Right: Album Art --- */
+#art {
+    width: 16;
+    height: 100%;
+    background: $panel;
+    border-left: solid $surface-lighten-1;
+    
+    /* Center the content */
+    align: center middle;
+    overflow: hidden;
+}
+
+/* --- ART FIX --- */
+/* Changed from width: 100% to auto. 
+   This prevents the text from wrapping weirdly inside the box. */
+#art-display {
+    width: auto;
+    height: auto;
+    text-align: center;
 }

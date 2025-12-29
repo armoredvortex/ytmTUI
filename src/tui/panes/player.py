@@ -1,26 +1,30 @@
 from textual.app import ComposeResult
 from textual.widgets import Static, Button, Label, ProgressBar
-from textual.containers import Center, Horizontal
+from textual.containers import Center, Horizontal, Container
 
 class Player(Static):
     """Displays player controls, track info, and progress."""
 
     def compose(self) -> ComposeResult:
+        # 1. Track Info (Keep centered)
         with Center():
             yield Label("Not Playing", id="track-info")
         
-        # New Layout: [Time] [Bar] [Time]
-        with Center():
+        # 2. Progress Bar (REMOVE Center, use Container)
+        # We give this a specific ID to force width: 100% in CSS
+        with Container(id="progress-wrapper"):
             with Horizontal(id="progress-container"):
                 yield Label("0:00", id="time-current")
-                yield ProgressBar(total=100, show_eta=False, show_percentage=False, id="progress-bar")
+                yield ProgressBar(total=100,show_eta=False, show_percentage=False, id="progress-bar")
                 yield Label("0:00", id="time-total")
 
+        # 3. Controls (Keep centered)
         with Center():
             with Horizontal(id="controls"):
                 yield Button("Pause", id="pause-btn", variant="primary") 
                 yield Button("Stop", id="stop-btn", variant="error")
-
+    
+    # ... (Keep the rest of your methods: on_mount, update_progress, format_time, on_button_pressed, update_now_playing) ...
     def on_mount(self) -> None:
         self.set_interval(0.5, self.update_progress)
 
@@ -33,24 +37,20 @@ class Player(Static):
         current = player.current_time
         total = player.total_duration
 
-        # Update Labels
         lbl_current.update(self.format_time(current))
         lbl_total.update(self.format_time(total))
 
-        # Update Bar
         if total == 0:
             bar.update(total=100, progress=0)
         else:
             bar.update(total=total, progress=current)
 
     def format_time(self, seconds: float) -> str:
-        """Converts seconds to MM:SS format."""
         if not seconds: return "0:00"
         m = int(seconds // 60)
         s = int(seconds % 60)
         return f"{m}:{s:02d}"
 
-    # ... existing on_button_pressed and update_now_playing ...
     def on_button_pressed(self, event: Button.Pressed) -> None:
         button_id = event.button.id
         player = self.app.backend.player

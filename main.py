@@ -1,5 +1,5 @@
-from src.tui import MusicApp
+from src.tui import ytmTUI
 
 if __name__ == "__main__":
-	app = MusicApp()
+	app = ytmTUI()
 	app.run()

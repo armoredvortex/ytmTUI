@@ -1,1 +1,1 @@
-from .app import MusicApp
+from .app import ytmTUI

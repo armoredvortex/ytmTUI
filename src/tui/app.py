@@ -2,31 +2,35 @@ from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer
 from textual.containers import Container, Horizontal
 
-# Import your backend
 from src.backend import MusicBackend
-
 from src.tui.panes.browser import Browser
 from src.tui.panes.art import Art
 from src.tui.panes.player import Player
 
-class MusicApp(App):
+class ytmTUI(App):
     CSS_PATH = "music.tcss" 
 
     def __init__(self):
         super().__init__()
-        # Initialize the backend library and player
         self.backend = MusicBackend()
 
     def compose(self) -> ComposeResult:
-        yield Header()
+        yield Header(show_clock=True)
+        
         with Container(id="app-grid"):
-            with Horizontal(id="top-split"):
-                # Pass id="browser" so we can style it
-                yield Browser(id="browser")
+            # Browser takes top
+            yield Browser(id="browser")
+
+            # Split bottom: Player (Left) + Art (Right)
+            with Horizontal(id="bottom-split"):
+                yield Player(id="player")
                 yield Art(id="art")
-            yield Player(id="player")
+                
         yield Footer()
 
+    def on_mount(self) -> None:
+        self.title = "ytmTUI"
+
 if __name__ == "__main__":
-    app = MusicApp()
+    app = ytmTUI()
     app.run()
