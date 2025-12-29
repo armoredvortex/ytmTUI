@@ -1,9 +1,9 @@
 from ytmusicapi import YTMusic
+import os
 
 class MusicLibrary:
     def __init__(self):
-        # We can expand this later with auth headers if needed
-        self.yt = YTMusic()
+        self.yt = YTMusic("../../browser.json")
 
     def search(self, query: str, limit: int = 10):
         """Searches for songs on YouTube Music."""

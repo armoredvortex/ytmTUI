@@ -26,3 +26,11 @@ class AudioPlayer:
     def is_playing(self):
         return not self.mpv.pause and self.mpv.core_idle is False
     
+    @property
+    def current_time(self):
+        return self.mpv.time_pos or 0
+    
+    @property
+    def total_duration(self):
+        return self.mpv.duration or 0
+    

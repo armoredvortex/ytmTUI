@@ -85,4 +85,20 @@ Button {
      text-align: center;
 }
 
-/* ... existing css ... */
+#progress-container {
+    height: 1;
+    width: 80%; /* Adjust total width of the progress area */
+    align: center middle;
+    margin-bottom: 1;
+}
+
+#time-current, #time-total {
+    width: 6; /* Fixed width prevents jitter when digits change (0:09 -> 0:10) */
+    text-align: center;
+    color: $text-muted;
+}
+
+#progress-bar {
+    width: 1fr; /* Fill remaining space between the two labels */
+    margin: 0 1; /* Small gap between text and bar */
+}
