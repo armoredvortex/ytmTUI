@@ -1,0 +1,29 @@
+/* Main container acts as a vertical column between Header and Footer */
+#app-grid {
+    layout: vertical;
+    height: 1fr; /* Fill available space */
+}
+
+/* --- Top Section Layout --- */
+#top-split {
+    height: 1fr; /* Take all remaining height not used by the player */
+}
+
+#browser {
+    width: 2fr;  /* Take 2 parts of width (approx 66%) */
+    border: solid green; /* Visual guide, remove later */
+    background: $panel;
+}
+
+#art {
+    width: 1fr;  /* Take 1 part of width (approx 33%) */
+    border: solid blue; /* Visual guide, remove later */
+    background: $panel;
+}
+
+/* --- Bottom Section Layout --- */
+#player {
+    height: 10;  /* Fixed height for controls */
+    border: solid red; /* Visual guide, remove later */
+    background: $surface;
+}
