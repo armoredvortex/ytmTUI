@@ -16,6 +16,11 @@ class Browser(Static):
         table = self.query_one(DataTable)
         # 2. Only add the columns you actually want the user to SEE
         table.add_columns("Title", "Artist", "Album")
+        user_playlists = self.app.backend.library.get_user_playlists()
+        
+        for playlist in user_playlists:
+            if(playlist['playlistId'].startswith("PL")):
+                table.add_row(f"{playlist['title']}", playlist['author'][0]['name'], "", key=playlist['playlistId'])
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
         query = event.value
@@ -47,7 +52,42 @@ class Browser(Static):
             # Note: We still use key=video_id to link the row to our data
             table.add_row(title, artist, album, key=video_id)
 
+    def display_playlist_songs(self, playlist_id: str) -> None:
+        table = self.query_one(DataTable)
+        table.clear()
+        
+        # Clear old metadata
+        self.thumbnails.clear() 
+        
+        playlist_items = self.app.backend.library.get_playlist_items(playlist_id)
+        
+        for item in playlist_items.get('tracks', []):
+            title = item.get('title', 'Unknown')
+            artist = item['artists'][0]['name'] if item.get('artists') else "Unknown"
+            album = item['album']['name'] if item.get('album') else "Single"
+            video_id = item['videoId']
+
+            # Extract Thumbnail URL
+            thumbnails = item.get('thumbnails', [])
+            thumb_url = thumbnails[-1]['url'] if thumbnails else ""
+
+            # Store the hidden URL
+            self.thumbnails[video_id] = thumb_url
+
+            # Add row with visible data
+            try:
+                table.add_row(title, artist, album, key=video_id)
+            except Exception as e:
+                continue
+
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        # Check if the selected row is a playlist
+        if event.row_key.value.startswith("PL"):
+            # Display songs in the playlist
+            playlist_id = event.row_key.value
+            self.display_playlist_songs(playlist_id)
+            return
+        
         video_id = event.row_key.value
         
         # Get visible data from the table
